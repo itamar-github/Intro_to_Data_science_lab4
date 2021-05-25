@@ -5,7 +5,8 @@ class CrossValidation:
     def __init__(self):
         self._folds = []
 
-    def run_cv(self, data, n_folds, classifier, scoring_function, print_final_score=True, print_fold_score=False):
+    def run_cv(self, data, n_folds, classifier, scoring_function, print_final_score=True, print_fold_score=False,
+               print_n_fold_title=True):
         """
         Runs cross validation
         :param n_folds: number of folds(int)
@@ -14,6 +15,7 @@ class CrossValidation:
         :param scoring_function: function receiving arguments [real, predicted] and returning number
         :param print_final_score: prints average cross fold score
         :param print_fold_score: prints score per fold
+        :param print_n_fold_title: prints 'n-fold-cross-validation' before fold scores
         :return: average score
         """
         # Create folds
@@ -25,6 +27,8 @@ class CrossValidation:
         for i in range(n_folds):
             self._folds.append(shuffled[i * fold_size: (i + 1) * fold_size])
 
+        if print_fold_score and print_n_fold_title:
+            print(f"{n_folds}-fold-cross-validation:")
         average_score = 0
         for out_fold_index in range(n_folds):
             # Create train/test
