@@ -53,3 +53,4 @@ class CrossValidation:
         if print_final_score:
             print(scoring_function.__name__, average_score)
         return average_score
+

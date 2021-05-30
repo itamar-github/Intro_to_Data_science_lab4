@@ -4,7 +4,6 @@ from cross_validation import CrossValidation
 from knn import KNN
 from metrics import accuracy_score
 from normalization import *
-from matplotlib import pyplot as plt
 
 
 def load_data():
@@ -59,19 +58,11 @@ def question_2(points):
     :param points: List of Points
     :return: None
     """
-    x = [i for i in range(1, 31)]
-    y = []
     for i in range(1, 31):
         m = KNN(i)
         cv = CrossValidation()
         print(f"for k = {i}", end=' ')
-        y.append(cv.run_cv(points, len(points), m, accuracy_score))
-
-    # plt.plot(x, y)
-    # plt.xlabel('K')
-    # plt.ylabel('accuracy')
-    # plt.title('accuracy of KNN')
-    # plt.show()
+        cv.run_cv(points, len(points), m, accuracy_score)
 
 
 def question_3(points, k=19, fold_range=(2, 10, 20), print_final=False, print_folds=True):
@@ -88,6 +79,7 @@ def question_3(points, k=19, fold_range=(2, 10, 20), print_final=False, print_fo
     m = KNN(k)
     cv = CrossValidation()
     print(f"K={k}")
+    # run cross validation with the different numbers of folds from fold_range
     for num_of_folds in fold_range:
         cv.run_cv(points, num_of_folds, m, accuracy_score, print_final, print_folds)
 
@@ -106,28 +98,33 @@ def question_4(points, k_range=(5, 7), n_folds=2):
     """
     print("Question 4:")
 
+    # initialize normalizers
     dum_norm = DummyNormalizer()
     sum_norm = SumNormalizer()
     min_max_norm = MinMaxNormalizer()
     z_norm = ZNormalizer()
     normalizers = [dum_norm, sum_norm, min_max_norm, z_norm]
-
+    # initialize cross validation object
     cv = CrossValidation()
-
+    # first_line is used to adjust blank lines printing
     first_line = True
-
+    # run the cross validation with all K in k_range
     for k in k_range:
         if not first_line:
             print()
         first_line = True
         print(f"K={k}")
+        # initialize KNN with the current k
         m = KNN(k)
+        # run the cross validation with the points normalized with the different normalizers
         for norm in normalizers:
             if not first_line:
                 print()
             first_line = False
+            # normalize
             norm.fit(points)
             new_points = norm.transform(points)
+            # run cross validation
             norm_accuracy = cv.run_cv(new_points, n_folds, m, accuracy_score, False, True, False)
             print(f"Accuracy of {type(norm).__name__} is {norm_accuracy}")
 
